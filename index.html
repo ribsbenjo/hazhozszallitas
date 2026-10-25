@@ -6,198 +6,157 @@
 <title>Erb Házhozszállítás</title>
 <style>
   :root {
-    --dark: #7A1F3D; --dark2: #5A1530; --dark3: #3F0E22; --accent: #C9A227; --accentLight: #E3C766; --accentDark: #9C7A12; --accentTint: #FBF4DC;
-    --text: #1F2937; --grey: #6B7280; --grey2: #A3A9B5; --line: #EFE6E9;
-    --tint: #FAF4F6; --tint2: #F4E7EC; --sage: #E7CBD5; --white: #FFFFFF;
-    --green: #2E7D5B; --greenTint: #E3F0E9; --red: #B03A2E;
-    --bg: #F8F1F3; --card: #FFFFFF;
-    --shadow: 0 1px 2px rgba(90,21,48,.06), 0 4px 14px rgba(90,21,48,.07);
-    --shadowUp: 0 2px 4px rgba(90,21,48,.08), 0 12px 28px rgba(90,21,48,.14);
-    --r: 16px;
-    --font: "Calisto MT", Georgia, "Times New Roman", serif;
+    --brand: #7A1F3D; --brandDark: #5A1530; --gold: #C9A227; --goldDark: #7D600C; --goldTint: #FBF4DC;
+    --text: #1F2937; --muted: #4B5563; --line: #E4DCDF; --bg: #F7F3F4; --soft: #F5EAEE; --white: #FFFFFF;
+    --green: #2E7D5B; --greenTint: #E6F2EC; --red: #A8322A; --redTint: #FBECEA;
+    --r: 14px;
+    --serif: "Calisto MT", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 18px; line-height: 1.4; -webkit-font-smoothing: antialiased;
-    background-image: radial-gradient(circle at 0 0, rgba(201,162,39,.06), transparent 40%), radial-gradient(circle at 100% 100%, rgba(122,31,61,.06), transparent 45%); background-attachment: fixed; }
-  button { font-family: inherit; font-size: inherit; color: inherit; cursor: pointer; border: 0; background: none; transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease, color .2s ease; }
-  button:active:not(:disabled) { transform: scale(.97); }
-  button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  input, select, textarea { font-family: inherit; font-size: 18px; color: var(--text); }
-  .app { max-width: 560px; margin: 0 auto; min-height: 100vh; background: var(--bg); padding-bottom: 130px; }
-  .num { font-variant-numeric: lining-nums tabular-nums; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 18px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  button { font-family: inherit; font-size: inherit; color: inherit; cursor: pointer; border: 0; background: none; transition: background .15s, border-color .15s, color .15s; }
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  input, textarea { font-family: inherit; font-size: 18px; color: var(--text); }
+  .app { max-width: 560px; margin: 0 auto; min-height: 100vh; background: var(--bg); padding-bottom: 150px; }
+  h1, h2, h3 { font-family: var(--serif); }
 
   /* header */
-  header { color: var(--white); padding: 26px 20px 30px; position: relative; overflow: hidden;
-    background: radial-gradient(120% 90% at 100% 0%, rgba(201,162,39,.28), transparent 55%), linear-gradient(150deg, #8C2749 0%, var(--dark) 45%, var(--dark3) 100%); }
-  header .rings { position: absolute; right: -70px; top: -70px; width: 260px; height: 260px; pointer-events: none; }
-  header .badge { position: absolute; right: 18px; top: 22px; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
-    background: linear-gradient(145deg, var(--accentLight), var(--accent) 60%, var(--accentDark)); box-shadow: 0 6px 18px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.4); }
-  header .badge svg { width: 28px; height: 28px; fill: var(--dark2); }
-  .kicker { font-size: 12.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--accentLight); font-weight: bold; display: flex; align-items: center; gap: 8px; }
-  .kicker::before { content: ""; width: 22px; height: 2px; background: var(--accent); border-radius: 2px; }
-  header h1 { margin: 8px 0 8px; padding-right: 64px; font-size: clamp(28px, 7.6vw, 36px); line-height: 1.05; letter-spacing: -.01em; }
-  header h1 em { font-style: italic; color: var(--accentLight); font-weight: normal; }
-  header p { margin: 0; color: var(--sage); font-size: 16.5px; max-width: 72%; }
-  .trust { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; position: relative; }
-  .trust span { font-size: 13.5px; padding: 6px 11px; border-radius: 999px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.16); color: #FFF; backdrop-filter: blur(4px); }
-  .trust span b { color: var(--accentLight); }
+  header { background: var(--brand); color: var(--white); padding: 22px 16px 24px; border-bottom: 4px solid var(--gold); }
+  .kicker { font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: #F0D77F; font-weight: 600; }
+  header h1 { margin: 4px 0 6px; font-size: 32px; line-height: 1.1; }
+  header p { margin: 0; color: #F6E6EC; font-size: 17px; }
 
-  /* steps: numbered progress */
-  .steps { display: flex; background: var(--white); padding: 14px 10px 12px; position: sticky; top: 0; z-index: 5; box-shadow: 0 1px 0 var(--line), 0 6px 16px rgba(90,21,48,.05); }
+  /* steps */
+  .steps { display: flex; background: var(--white); padding: 12px 8px; position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--line); }
   .steps:empty { display: none; }
-  .step { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; line-height: 1.2; gap: 5px; font-size: 13.5px; color: var(--grey2); position: relative; padding: 0 2px; }
-  .step::before { content: ""; position: absolute; top: 14px; left: calc(-50% + 18px); right: calc(50% + 18px); height: 2px; background: var(--line); border-radius: 2px; }
-  .step:first-child::before { display: none; }
-  .step i { font-style: normal; line-height: 1; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: bold; background: var(--tint2); color: var(--grey); transition: .25s; }
-  .step.past i { background: var(--accent); color: var(--white); }
-  .step.past::before, .step.on::before { background: var(--accent); }
-  .step.on { color: var(--dark); font-weight: bold; }
-  .step.on i { background: var(--dark); color: var(--white); box-shadow: 0 0 0 4px rgba(122,31,61,.14); }
+  .step { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; font-size: 15px; line-height: 1.2; color: #8A8F99; }
+  .step i { font-style: normal; line-height: 1; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 15px; font-weight: 700; background: #EEE8EA; color: var(--muted); }
   .step.past { color: var(--text); }
+  .step.past i { background: var(--gold); color: var(--white); }
+  .step.on { color: var(--brand); font-weight: 700; }
+  .step.on i { background: var(--brand); color: var(--white); }
   .step:disabled { cursor: default; }
 
-  main { padding: 22px 16px; animation: rise .35s ease both; }
-  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-  h2 { color: var(--dark); font-size: 27px; margin: 4px 0 4px; letter-spacing: -.01em; }
-  .sub { color: var(--grey); margin: 0 0 18px; font-size: 16px; }
-  .sub a { color: var(--dark); text-decoration-color: var(--accent); text-underline-offset: 3px; }
+  main { padding: 22px 16px; }
+  h2 { color: var(--brand); font-size: 28px; line-height: 1.2; margin: 0 0 6px; }
+  .sub { color: var(--muted); margin: 0 0 18px; font-size: 17px; }
+  .card { background: var(--white); border: 1px solid var(--line); border-radius: var(--r); }
 
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); }
-
-  /* village picker */
-  .places { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .place { text-align: left; padding: 14px 14px 13px; border-radius: 14px; background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow); min-height: 76px; position: relative; display: flex; flex-direction: column; justify-content: center; }
-  .place:hover { box-shadow: var(--shadowUp); border-color: var(--sage); }
-  .place b { display: block; font-size: 18.5px; color: var(--text); }
-  .place .d { font-size: 14px; color: var(--grey); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-  .place .d::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rc, var(--accent)); flex: none; }
-  .place .km { font-size: 13px; color: var(--grey2); margin-top: 1px; padding-left: 14px; }
-  .place.rA { --rc: var(--accent); } .place.rB { --rc: #B7577A; }
-  .place.on { border-color: var(--dark); box-shadow: 0 0 0 2px var(--dark), var(--shadowUp); background: var(--tint2); }
-  .place.home { grid-column: 1 / -1; min-height: 88px; padding: 16px 18px; border: 0;
-    background: radial-gradient(90% 140% at 100% 0%, rgba(201,162,39,.35), transparent 60%), linear-gradient(135deg, var(--dark), var(--dark2)); }
-  .place.home b { color: var(--white); font-size: 22px; padding-right: 90px; } .place.home .d { color: var(--sage); }
-  .place.home .d::before { background: var(--accentLight); }
-  .place.home .km { position: absolute; margin: 0; border-radius: 999px; background: var(--accent); color: var(--dark3); font-weight: bold; top: 50%; transform: translateY(-50%); right: 16px; padding: 5px 11px; font-size: 13px; }
-  .place.home.on { box-shadow: 0 0 0 3px var(--accent), var(--shadowUp); }
-  .legend { display: flex; gap: 16px; font-size: 13.5px; color: var(--grey); margin: 12px 2px 0; }
-  .legend span { display: flex; align-items: center; gap: 6px; }
-  .legend span::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rc); }
-
-  .keybar { margin-top: 18px; display: flex; gap: 14px; align-items: flex-start; background: var(--accentTint); border: 1px solid #EEDFA9; border-radius: var(--r); padding: 16px; font-size: 16px; color: var(--text); }
-  .keybar .ico { width: 40px; height: 40px; border-radius: 12px; background: var(--accent); display: grid; place-items: center; flex: none; }
-  .keybar .ico svg { width: 20px; height: 20px; fill: var(--white); }
-  .keybar b { color: var(--accentDark); display: block; font-size: 17px; margin-bottom: 2px; }
+  /* village list */
+  .group { font-family: var(--sans); font-size: 15px; font-weight: 700; color: var(--goldDark); text-transform: uppercase; letter-spacing: .06em; margin: 22px 0 8px; }
+  .group:first-of-type { margin-top: 4px; }
+  .list { background: var(--white); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+  .place { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px; min-height: 60px; text-align: left; font-size: 19px; font-weight: 600; border-bottom: 1px solid var(--line); }
+  .place:last-child { border-bottom: 0; }
+  .place:hover { background: var(--soft); }
+  .place::after { content: "›"; font-size: 28px; line-height: 1; color: #B9AEB3; font-weight: 400; }
+  .place.on { background: var(--soft); color: var(--brand); box-shadow: inset 4px 0 0 var(--brand); }
+  .place.on::after { content: "✓"; font-size: 20px; color: var(--brand); font-weight: 700; }
+  .info { margin-top: 22px; background: var(--goldTint); border-radius: var(--r); padding: 16px; font-size: 17px; }
+  .info b { color: var(--goldDark); }
 
   /* shop */
-  .cats { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 14px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; scrollbar-width: none; }
-  .cats::-webkit-scrollbar { display: none; }
-  .cat { flex: none; padding: 9px 15px 9px 12px; border-radius: 999px; background: var(--white); border: 1px solid var(--line); font-size: 16px; white-space: nowrap; box-shadow: 0 1px 2px rgba(90,21,48,.05); display: flex; align-items: center; gap: 7px; }
-  .cat .ce { font-size: 18px; line-height: 1; }
-  .cat.on { background: var(--dark); color: var(--white); border-color: var(--dark); box-shadow: 0 4px 12px rgba(122,31,61,.25); }
+  .where { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; margin-bottom: 16px; }
+  .where div { font-size: 16px; color: var(--muted); line-height: 1.35; }
+  .where div b { display: block; color: var(--text); font-size: 19px; }
+  .link { color: var(--brand); font-weight: 600; font-size: 16px; text-decoration: underline; text-underline-offset: 3px; padding: 8px 4px; flex: none; }
 
-  .usual { display: flex; align-items: center; gap: 14px; padding: 16px; margin-bottom: 16px; border-radius: var(--r); position: relative; overflow: hidden;
-    background: linear-gradient(120deg, #FDF7E3, #F8EBC0); border: 1px solid #EEDFA9; box-shadow: var(--shadow); }
-  .usual::after { content: ""; position: absolute; right: -30px; bottom: -40px; width: 120px; height: 120px; border-radius: 50%; border: 18px solid rgba(201,162,39,.14); pointer-events: none; }
-  .usual .ico { width: 50px; height: 50px; border-radius: 14px; background: linear-gradient(145deg, var(--accentLight), var(--accent)); display: grid; place-items: center; flex: none; box-shadow: 0 4px 10px rgba(156,122,18,.3); }
-  .usual .ico svg { width: 24px; height: 24px; fill: var(--white); }
-  .usual div { flex: 1; font-size: 14.5px; color: #5B4A14; position: relative; z-index: 1; }
-  .usual div b { display: block; font-size: 18px; color: var(--accentDark); margin-bottom: 1px; }
-  .btn-gold { background: var(--dark); color: var(--white); padding: 11px 16px; border-radius: 999px; font-weight: bold; font-size: 16px; position: relative; z-index: 1; box-shadow: 0 4px 10px rgba(122,31,61,.25); }
+  .usual { display: flex; align-items: center; gap: 14px; padding: 16px; margin-bottom: 20px; border-radius: var(--r); background: var(--goldTint); border: 1px solid #EBDCA2; }
+  .usual div { flex: 1; font-size: 16px; color: var(--muted); }
+  .usual div b { display: block; font-size: 19px; color: var(--text); font-family: var(--serif); }
+  .btn-sec { background: var(--brand); color: var(--white); padding: 12px 18px; min-height: 48px; border-radius: 999px; font-weight: 700; font-size: 17px; flex: none; }
+
+  .cats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
+  .cat { display: flex; align-items: center; gap: 8px; padding: 10px 12px; min-height: 52px; border-radius: 12px; background: var(--white); border: 1.5px solid var(--line); font-size: 17px; text-align: left; line-height: 1.2; }
+  .cat .ce { font-size: 22px; line-height: 1; }
+  .cat.on { background: var(--brand); color: var(--white); border-color: var(--brand); font-weight: 600; }
 
   .items { display: grid; gap: 10px; }
-  .item { display: flex; align-items: center; gap: 14px; padding: 12px 12px 12px 12px; transition: box-shadow .2s; }
-  .item.in { border-color: var(--sage); box-shadow: 0 0 0 1px var(--sage), var(--shadow); }
-  .item .em { width: 60px; height: 60px; border-radius: 14px; display: grid; place-items: center; font-size: 32px; flex: none; background: var(--emc, var(--tint)); }
-  .em.c-hus { --emc: linear-gradient(145deg, #FBE9EC, #F5D5DC); } .em.c-zold { --emc: linear-gradient(145deg, #EAF4E4, #D6EACB); }
-  .em.c-pek { --emc: linear-gradient(145deg, #FCF1DF, #F5E0BC); } .em.c-tej { --emc: linear-gradient(145deg, #EEF3FA, #DCE6F3); }
-  .em.c-alap { --emc: linear-gradient(145deg, #FBF6E6, #F1E6C4); } .em.c-drog { --emc: linear-gradient(145deg, #F0EEFA, #E0DCF2); }
-  .item .info { flex: 1; min-width: 0; }
-  .item .name { font-size: 18px; line-height: 1.2; }
-  .item .unit { font-size: 14px; color: var(--grey); margin-top: 1px; }
-  .item .price { font-size: 17.5px; color: var(--dark); font-weight: bold; margin-top: 3px; }
-  .qty { display: flex; align-items: center; gap: 2px; flex: none; background: var(--tint); border-radius: 999px; padding: 3px; }
-  .qty button { width: 42px; height: 42px; border-radius: 50%; font-size: 24px; line-height: 1; display: grid; place-items: center; }
-  .qty .minus { background: var(--white); color: var(--dark); box-shadow: 0 1px 3px rgba(90,21,48,.12); }
-  .qty .plus { background: var(--dark); color: var(--white); box-shadow: 0 2px 6px rgba(122,31,61,.3); }
-  .qty .n { min-width: 28px; text-align: center; font-weight: bold; font-size: 18px; }
-  .add { background: var(--white); color: var(--dark); padding: 10px 16px; border-radius: 999px; font-size: 16px; font-weight: bold; flex: none; border: 1.5px solid var(--dark); }
-  .add:hover { background: var(--dark); color: var(--white); }
+  .item { display: flex; align-items: center; gap: 14px; padding: 14px; }
+  .item.in { border-color: var(--brand); }
+  .em { width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; font-size: 30px; flex: none; background: var(--soft); }
+  .item .txt { flex: 1; min-width: 0; }
+  .item .name { font-size: 18px; font-weight: 600; line-height: 1.25; }
+  .item .unit { font-size: 15px; color: var(--muted); }
+  .item .price { font-size: 18px; color: var(--brand); font-weight: 700; margin-top: 2px; }
+  .qty { display: flex; align-items: center; gap: 4px; flex: none; }
+  .qty button { width: 46px; height: 46px; border-radius: 50%; font-size: 26px; line-height: 1; display: grid; place-items: center; }
+  .qty .minus { background: var(--white); color: var(--brand); border: 2px solid var(--brand); }
+  .qty .plus { background: var(--brand); color: var(--white); }
+  .qty .n { min-width: 28px; text-align: center; font-weight: 700; font-size: 20px; }
+  .add { background: var(--brand); color: var(--white); padding: 0 18px; height: 48px; border-radius: 999px; font-size: 17px; font-weight: 700; flex: none; }
 
   /* cart */
-  .lines .line { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .lines .line { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px; border-bottom: 1px solid var(--line); }
   .lines .line:last-child { border-bottom: 0; }
-  .lines .line .l { display: flex; align-items: center; gap: 12px; min-width: 0; }
-  .lines .line .em { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 24px; flex: none; background: var(--emc, var(--tint)); }
-  .lines .line small { color: var(--grey); font-size: 14px; display: block; }
+  .lines .line .l { display: flex; align-items: center; gap: 12px; min-width: 0; font-weight: 600; line-height: 1.25; }
+  .lines .em { width: 44px; height: 44px; font-size: 24px; }
+  .lines .line small { color: var(--muted); font-size: 15px; display: block; font-weight: 400; margin-top: 2px; }
   .sum { padding: 16px; }
-  .sum .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 16px; color: var(--grey); }
-  .sum .row.total { color: var(--dark); font-size: 23px; font-weight: bold; border-top: 1px dashed var(--sage); margin-top: 8px; padding-top: 12px; }
-  .meter { height: 10px; background: var(--tint2); border-radius: 99px; overflow: hidden; margin: 12px 0 6px; }
-  .meter i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accentLight)); border-radius: 99px; transition: width .4s ease; }
-  .meter.full i { background: linear-gradient(90deg, var(--green), #4FA57E); }
-  .hint { font-size: 15px; color: var(--grey); }
-  .hint b { color: var(--accentDark); }
+  .sum .row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 17px; color: var(--muted); }
+  .sum .row.total { color: var(--text); font-size: 22px; font-weight: 700; border-top: 1px solid var(--line); margin-top: 8px; padding-top: 12px; }
+  .meter { height: 10px; background: #EEE8EA; border-radius: 99px; overflow: hidden; margin: 14px 0 6px; }
+  .meter i { display: block; height: 100%; background: var(--gold); border-radius: 99px; transition: width .3s; }
+  .meter.full i { background: var(--green); }
+  .hint { font-size: 16px; color: var(--muted); }
+  .hint b { color: var(--text); }
   .meter.full + .hint b { color: var(--green); }
-  .warn { color: var(--red); font-size: 15px; margin-top: 8px; background: #FBEDEB; padding: 8px 12px; border-radius: 10px; }
+  .warn { color: var(--red); font-size: 16px; margin-top: 10px; background: var(--redTint); padding: 10px 12px; border-radius: 10px; }
 
-  .field { margin-bottom: 16px; }
-  .field label { display: block; font-size: 15px; color: var(--grey); margin-bottom: 6px; }
-  .field input, .field textarea { width: 100%; padding: 14px 15px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--white); transition: border-color .2s, box-shadow .2s; }
-  .field input::placeholder, .field textarea::placeholder { color: #BFC3CC; }
-  .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(201,162,39,.18); }
+  .field { margin-bottom: 18px; }
+  .field > label, .field > .lbl { display: block; font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .field input, .field textarea { width: 100%; padding: 14px; min-height: 54px; border: 2px solid var(--line); border-radius: 12px; background: var(--white); }
+  .field input::placeholder, .field textarea::placeholder { color: #9CA1AA; }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--brand); }
+  .opt { font-weight: 400; color: var(--muted); }
   .days { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .day { padding: 13px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--white); text-align: left; }
-  .day b { display: block; } .day span { font-size: 14px; color: var(--grey); }
-  .day.on { border-color: var(--dark); background: var(--tint2); box-shadow: 0 0 0 1px var(--dark); }
+  .day { padding: 12px 14px; min-height: 54px; border-radius: 12px; border: 2px solid var(--line); background: var(--white); text-align: left; line-height: 1.3; }
+  .day b { display: block; font-size: 18px; } .day span { font-size: 15px; color: var(--muted); }
+  .day.on { border-color: var(--brand); background: var(--soft); color: var(--brand); }
   .pay { display: flex; gap: 8px; }
   .pay .day { flex: 1; text-align: center; }
 
-  .empty { text-align: center; padding: 36px 16px; color: var(--grey); }
-  .empty .big { font-size: 40px; width: 84px; height: 84px; margin: 0 auto 6px; border-radius: 50%; display: grid; place-items: center; background: var(--tint2); }
+  .empty { text-align: center; padding: 32px 16px; color: var(--muted); }
+  .empty .big { font-size: 44px; }
 
   /* bottom bar */
-  .bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(255,255,255,.88); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(90,21,48,.07); z-index: 10; }
-  .bar .in { max-width: 528px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
-  .bar .meta { flex: 1; font-size: 14px; color: var(--grey); }
-  .bar .meta b { display: block; color: var(--dark); font-size: 22px; }
-  .cta { background: linear-gradient(135deg, #8C2749, var(--dark) 50%, var(--dark2)); color: var(--white); padding: 15px 22px; border-radius: 14px; font-size: 18px; font-weight: bold; box-shadow: 0 6px 16px rgba(122,31,61,.3); display: inline-flex; align-items: center; gap: 10px; }
-  .cta::after { content: "→"; font-weight: normal; transition: transform .2s; }
-  .cta:hover:not(:disabled)::after { transform: translateX(3px); }
-  .cta:disabled { background: #D5D8DE; color: #fff; box-shadow: none; cursor: not-allowed; }
-  .call { display: flex; align-items: center; gap: 14px; margin: 20px 0 0; padding: 16px; border-radius: var(--r); border: 1.5px dashed var(--accent); color: var(--text); font-size: 16px; text-decoration: none; background: var(--white); }
-  .call .ico { width: 44px; height: 44px; border-radius: 50%; background: var(--accentTint); display: grid; place-items: center; flex: none; }
-  .call svg { width: 20px; height: 20px; fill: var(--accentDark); }
-  .call b { color: var(--accentDark); }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--white); border-top: 1px solid var(--line); box-shadow: 0 -4px 16px rgba(0,0,0,.06); z-index: 10; }
+  .bar .in { max-width: 528px; margin: 0 auto; display: flex; gap: 12px; align-items: center; }
+  .bar .meta { flex: 1; font-size: 15px; color: var(--muted); line-height: 1.3; }
+  .bar .meta b { display: block; color: var(--text); font-size: 22px; }
+  .bar .why { max-width: 528px; margin: 8px auto 0; font-size: 15px; color: var(--red); line-height: 1.35; }
+  .cta { background: var(--brand); color: var(--white); padding: 0 24px; height: 56px; border-radius: 14px; font-size: 18px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
+  .cta:hover:not(:disabled) { background: var(--brandDark); }
+  .cta:disabled { background: #C9CDD3; cursor: not-allowed; }
+  .call { display: flex; align-items: center; gap: 14px; margin: 16px 0 0; padding: 16px; border-radius: var(--r); border: 1px solid var(--line); color: var(--text); font-size: 17px; text-decoration: none; background: var(--white); }
+  .call .ico { width: 46px; height: 46px; border-radius: 50%; background: var(--green); display: grid; place-items: center; flex: none; }
+  .call svg { width: 20px; height: 20px; fill: var(--white); }
+  .call b { color: var(--green); }
 
-  .done { text-align: center; padding: 30px 18px; }
-  .done .check { width: 96px; height: 96px; margin: 6px auto 18px; border-radius: 50%; background: linear-gradient(145deg, #3C9A70, var(--green)); display: grid; place-items: center; box-shadow: 0 0 0 10px var(--greenTint), 0 10px 24px rgba(46,125,91,.3); animation: pop .5s cubic-bezier(.2,1.4,.4,1) both; }
-  @keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
-  .done .check svg { width: 44px; height: 44px; fill: var(--white); }
+  .done { text-align: center; padding: 30px 8px; }
+  .done .check { width: 88px; height: 88px; margin: 6px auto 18px; border-radius: 50%; background: var(--green); display: grid; place-items: center; }
+  .done .check svg { width: 42px; height: 42px; fill: var(--white); }
   .done h2 { font-size: 30px; }
-  .done .when { background: linear-gradient(120deg, #FDF7E3, #F8EBC0); border: 1px solid #EEDFA9; border-radius: var(--r); padding: 18px; margin: 18px 0; font-size: 17px; }
-  .done .when b { color: var(--accentDark); font-size: 24px; display: block; margin-bottom: 2px; }
-  .done .cta { margin-top: 6px; }
-  .ghost { color: var(--dark); text-decoration: underline; padding: 10px; font-size: 16px; }
+  .done .when { background: var(--goldTint); border-radius: var(--r); padding: 18px; margin: 18px 0; font-size: 18px; }
+  .done .when b { color: var(--text); font-size: 24px; display: block; font-family: var(--serif); }
 
-  .toast { position: fixed; left: 50%; bottom: 104px; transform: translateX(-50%) translateY(20px); background: var(--dark3); color: var(--white); padding: 11px 20px; border-radius: 999px; font-size: 15px; opacity: 0; transition: .25s; pointer-events: none; box-shadow: 0 8px 20px rgba(0,0,0,.2); z-index: 20; white-space: nowrap; }
-  .toast::before { content: "✓  "; color: var(--accentLight); }
+  .notice { margin-top: 14px; background: #EEF3FA; border: 1px solid #CFDCEF; color: var(--text); border-radius: var(--r); padding: 14px 16px; font-size: 17px; text-align: left; }
+  .notice b { color: #1F4E8C; }
+  .toast { position: fixed; left: 50%; bottom: 110px; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--white); padding: 12px 20px; border-radius: 999px; font-size: 16px; opacity: 0; transition: .25s; pointer-events: none; z-index: 20; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  @media (min-width: 600px) { .app { box-shadow: 0 0 40px rgba(90,21,48,.08); } }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  @media (min-width: 600px) { .app { box-shadow: 0 0 30px rgba(0,0,0,.06); } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <svg class="rings" viewBox="0 0 260 260" fill="none" stroke="#C9A227"><circle cx="130" cy="130" r="128" stroke-opacity=".22"/><circle cx="130" cy="130" r="100" stroke-opacity=".3"/><circle cx="130" cy="130" r="72" stroke-opacity=".4" stroke-dasharray="3 6"/></svg>
-    <div class="badge"><svg viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h16c0 53 43 96 96 96s96-43 96-96h128c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zm368 160h50.7l77.3 77.3V256H416v-96zM112 416a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg></div>
     <div class="kicker">Erb és Társai • Bóly</div>
-    <h1>Házhoz<em>szállítás</em></h1>
+    <h1>Házhozszállítás</h1>
     <p>Friss hús, zöldség és a napi bevásárlás – az ajtóig hozzuk.</p>
-    <div class="trust"><span><b>10</b> település</span><span>Fizetés az ajtóban</span><span>Ismerős futár</span></div>
   </header>
 
   <nav class="steps" id="steps"></nav>
@@ -207,8 +166,9 @@
 <div class="bar" id="bar"><div class="in" id="barIn"></div></div>
 <div class="toast" id="toast"></div>
 
+<script src="store.js"></script>
 <script>
-const PHONE = '+36 69 000 0000'; // placeholder, replace with the store's number
+const PHONE = '+36 20 270 4009';
 const FREE_OVER = 10000, FEE = 490;
 
 // Bóly daily (Mon–Sat); villages ≤10 km on two fixed routes, two days each
@@ -228,7 +188,7 @@ const DAYN = ['vasárnap', 'hétfő', 'kedd', 'szerda', 'csütörtök', 'péntek
 
 const CATS = [
   { id: 'hus', e: '🥩', name: 'Friss hús' }, { id: 'zold', e: '🥕', name: 'Zöldség, gyümölcs' }, { id: 'pek', e: '🍞', name: 'Pékáru' },
-  { id: 'tej', e: '🥛', name: 'Tej, tojás, sajt' }, { id: 'alap', e: '🌾', name: 'Alapélelmiszer' }, { id: 'drog', e: '🧴', name: 'Drogériai alapcikkek' },
+  { id: 'tej', e: '🥛', name: 'Tej, tojás, sajt' }, { id: 'alap', e: '🌾', name: 'Alapélelmiszer' }, { id: 'drog', e: '🧴', name: 'Háztartás' },
 ];
 const ITEMS = [
   { id: 1, c: 'hus', e: '🥩', n: 'Sertéskaraj, csontos', u: 'kb. 1 kg, saját bontás', p: 2990 },
@@ -263,7 +223,7 @@ const S = { step: 0, place: null, cat: 'hus', cart: {}, day: null, pay: 'kp', na
 try { const saved = JSON.parse(localStorage.getItem('hazhozszallitas') || 'null'); if (saved) Object.assign(S, saved, { step: saved.place ? 1 : 0, orderNo: null }); } catch (e) {}
 const save = () => { try { localStorage.setItem('hazhozszallitas', JSON.stringify({ place: S.place, cart: S.cart, name: S.name, addr: S.addr, phone: S.phone, pay: S.pay })); } catch (e) {} };
 
-const ft = n => n.toLocaleString('hu-HU').replace(/ /g, ' ') + ' Ft';
+const ft = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0") + "\u00a0Ft";
 const place = () => PLACES.find(p => p.id === S.place);
 const subtotal = () => Object.entries(S.cart).reduce((a, [id, q]) => a + ITEMS.find(i => i.id == id).p * q, 0);
 const count = () => Object.values(S.cart).reduce((a, b) => a + b, 0);
@@ -292,9 +252,8 @@ function go(step) { S.step = step; render(); window.scrollTo({ top: 0, behavior:
 
 const ICON_CALL = '<svg viewBox="0 0 512 512"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64c0 247.4 200.6 448 448 448 18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368c-70.4-33.3-127.4-90.3-160.7-160.7l49.3-40.3c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>';
 const ICON_BASKET = '<svg viewBox="0 0 576 512"><path d="M253.3 35.1c6.1-11.8 1.5-26.3-10.2-32.4s-26.3-1.5-32.4 10.2L117.6 192H32c-17.7 0-32 14.3-32 32s14.3 32 32 32L83.9 463.5C91 492 116.6 512 146 512h284c29.4 0 55-20 62.1-48.5L544 256c17.7 0 32-14.3 32-32s-14.3-32-32-32h-85.6L365.3 12.9C359.2 1.2 344.7-3.4 332.9 2.7s-16.3 20.6-10.2 32.4L404.3 192H171.7l81.6-156.9z"/></svg>';
-const ICON_TRUCK = '<svg viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h16c0 53 43 96 96 96s96-43 96-96h128c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zm368 160h50.7l77.3 77.3V256H416v-96zM112 416a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>';
 const ICON_CHECK = '<svg viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>';
-const callLink = () => `<a class="call" href="tel:${PHONE.replace(/\s/g, '')}"><span class="ico">${ICON_CALL}</span><span>Inkább telefonál? <b>8–11 óra között</b> ismerős kolléga veszi fel.</span></a>`;
+const callLink = () => `<a class="call" href="tel:${PHONE.replace(/\s/g, '')}"><span class="ico">${ICON_CALL}</span><span>Inkább telefonon rendelne? Hívjon 8 és 11 óra között:<br><b>${PHONE}</b></span></a>`;
 
 function renderSteps() {
   const names = ['Hová?', 'Vásárlás', 'Kosár', 'Átvétel'];
@@ -304,25 +263,25 @@ function renderSteps() {
 }
 
 function viewPlace() {
-  const p = place();
-  return `<h2>Hová szállítsunk?</h2><p class="sub">Válassza ki a települést – megmutatjuk, mikor visszük.</p>
-  <div class="places">${PLACES.map(x => `<button class="place ${x.home ? 'home' : x.days[0] === 2 ? 'rA' : 'rB'} ${S.place === x.id ? 'on' : ''}" onclick="S.place='${x.id}';S.day=null;save();go(1)">
-    <b>${x.name}</b><span class="d">${x.home ? 'minden nap, hétfő–szombat' : daysText(x)}</span><span class="km num">${x.home ? 'Helyben' : String(x.km).replace('.', ',') + ' km'}</span></button>`).join('')}</div>
-  <div class="legend"><span style="--rc:var(--accent)">1. járat: kedd, péntek</span><span style="--rc:#B7577A">2. járat: szerda, szombat</span></div>
-  <div class="keybar"><div class="ico">${ICON_TRUCK}</div><div><b>Így működik</b>${ft(FREE_OVER)} felett ingyen hozzuk, alatta ${ft(FEE)}. Az ajtóban fizet, készpénzzel vagy kártyával.</div></div>
+  const groups = [['Minden nap, hétfőtől szombatig', x => x.home], ['Kedden és pénteken', x => !x.home && x.days[0] === 2], ['Szerdán és szombaton', x => !x.home && x.days[0] === 3]];
+  return `<h2>Hová szállítsunk?</h2><p class="sub">Koppintson a településére.</p>
+  ${groups.map(([t, fn]) => `<h3 class="group">${t}</h3><div class="list">${PLACES.filter(fn).map(x =>
+    `<button class="place ${S.place === x.id ? 'on' : ''}" onclick="S.place='${x.id}';S.day=null;save();go(1)">${x.name}</button>`).join('')}</div>`).join('')}
+  <div class="info"><b>${ft(FREE_OVER)} felett ingyen hozzuk</b>, alatta ${ft(FEE)} a kiszállítás. Az ajtóban fizet, készpénzzel vagy kártyával.</div>
   ${callLink()}`;
 }
 
 function viewShop() {
   const p = place();
   const list = ITEMS.filter(i => i.c === S.cat);
-  return `<h2>${p.name}</h2><p class="sub">Szállítás: ${daysText(p)}. <a href="#" onclick="go(0);return false" style="color:var(--dark)">Másik település</a></p>
-  <div class="usual"><div class="ico">${ICON_BASKET}</div><div><b>Heti törzskosár</b>Kenyér, tej, tojás, krumpli, karaj, sajt, alma – egy gombnyomással.</div>
-    <button class="btn-gold" onclick="addUsual()">Kérem</button></div>
+  return `<div class="where"><div><b>${p.name}</b>Szállítás: ${daysText(p)}</div><button class="link" onclick="go(0)">Módosítás</button></div>
+  <div class="usual"><div><b>Heti törzskosár</b>Kenyér, tej, tojás, krumpli, karaj, sajt és alma egyben.</div>
+    <button class="btn-sec" onclick="addUsual()">Kérem</button></div>
+  <h2>Mit hozzunk?</h2><p class="sub">Válasszon csoportot.</p>
   <div class="cats">${CATS.map(c => `<button class="cat ${S.cat === c.id ? 'on' : ''}" onclick="S.cat='${c.id}';render()"><span class="ce">${c.e}</span>${c.name}</button>`).join('')}</div>
   <div class="items">${list.map(i => {
     const q = S.cart[i.id] || 0;
-    return `<div class="card item ${q ? 'in' : ''}"><div class="em c-${i.c}">${i.e}</div><div class="info"><div class="name">${i.n}</div><div class="unit">${i.u}</div><div class="price num">${ft(i.p)}</div></div>
+    return `<div class="card item ${q ? 'in' : ''}"><div class="em">${i.e}</div><div class="txt"><div class="name">${i.n}</div><div class="unit">${i.u}</div><div class="price">${ft(i.p)}</div></div>
       ${q ? `<div class="qty"><button class="minus" aria-label="Kevesebb" onclick="setQty(${i.id},-1)">−</button><span class="n">${q}</span><button class="plus" aria-label="Több" onclick="setQty(${i.id},1)">+</button></div>`
           : `<button class="add" onclick="setQty(${i.id},1)">Kosárba</button>`}</div>`;
   }).join('')}</div>`;
@@ -332,7 +291,7 @@ function addUsual() { for (const [id, q] of Object.entries(USUAL)) S.cart[id] = 
 function summary() {
   const p = place(), sub = subtotal(), f = fee();
   const toFree = FREE_OVER - sub;
-  return `<div class="sum num">
+  return `<div class="sum">
     <div class="row"><span>Termékek</span><span>${ft(sub)}</span></div>
     <div class="row"><span>Kiszállítás</span><span>${f ? ft(f) : 'ingyenes'}</span></div>
     <div class="row total"><span>Összesen</span><span>${ft(sub + f)}</span></div>
@@ -345,28 +304,29 @@ function summary() {
 function viewCart() {
   const ids = Object.keys(S.cart);
   if (!ids.length) return `<h2>Kosár</h2><div class="card empty"><div class="big">🧺</div><p>Még üres a kosár.</p><button class="cta" onclick="go(1)">Vásárlás</button></div>${callLink()}`;
-  return `<h2>Kosár</h2><p class="sub">${count()} tétel • a húst és a zöldséget aznap reggel mérjük ki, a végösszeg néhány forinttal eltérhet.</p>
+  return `<h2>Kosár</h2><p class="sub">A húst és a zöldséget aznap reggel mérjük ki, ezért a végösszeg néhány forinttal eltérhet.</p>
   <div class="card lines">${ids.map(id => { const i = ITEMS.find(x => x.id == id), q = S.cart[id];
-    return `<div class="line"><div class="l"><div class="em c-${i.c}">${i.e}</div><div>${i.n}<small>${i.u} • ${ft(i.p)}</small></div></div>
-      <div class="qty"><button class="minus" onclick="setQty(${i.id},-1)">−</button><span class="n">${q}</span><button class="plus" onclick="setQty(${i.id},1)">+</button></div></div>`; }).join('')}</div>
+    return `<div class="line"><div class="l"><div class="em">${i.e}</div><div>${i.n}<small>${i.u} • ${ft(i.p)}</small></div></div>
+      <div class="qty"><button class="minus" aria-label="Kevesebb" onclick="setQty(${i.id},-1)">−</button><span class="n">${q}</span><button class="plus" aria-label="Több" onclick="setQty(${i.id},1)">+</button></div></div>`; }).join('')}</div>
   <div class="card" style="margin-top:12px">${summary()}</div>`;
 }
 
 function viewCheckout() {
   const p = place(), dates = nextDates(p);
   if (S.day == null || !dates.some(d => +d === S.day)) S.day = +dates[0];
-  const f = (k, l, type = 'text', ph = '') => `<div class="field"><label for="${k}">${l}</label><input id="${k}" type="${type}" placeholder="${ph}" value="${S[k] || ''}" oninput="S.${k}=this.value;save();renderBar()"></div>`;
-  return `<h2>Mikor és hová?</h2><p class="sub">${p.name} • ${daysText(p)}</p>
-  <div class="field"><label>Szállítási nap</label><div class="days">${dates.map(d => { const l = dateLabel(d);
+  const f = (k, l, type = 'text', ph = '') => `<div class="field"><label for="${k}">${l}</label><input id="${k}" type="${type}" placeholder="${ph}" value="${S[k] || ''}" autocomplete="${{name:'name',addr:'street-address',phone:'tel'}[k]}" oninput="S.${k}=this.value;save();renderBar()"></div>`;
+  return `<h2>Mikor és hová?</h2><p class="sub">Délután visszük, ide: ${p.name}.</p>
+  <div class="field"><span class="lbl">Melyik napon?</span><div class="days">${dates.map(d => { const l = dateLabel(d);
     return `<button class="day ${S.day === +d ? 'on' : ''}" onclick="S.day=${+d};render()"><b>${l.head}</b><span>${l.sub}, délután</span></button>`; }).join('')}</div></div>
   ${f('name', 'Név', 'text', 'Kovács Mária')}
   ${f('addr', 'Cím', 'text', p.home ? 'Bóly, Rákóczi u. 12.' : p.name + ', Fő u. 5.')}
-  ${f('phone', 'Telefonszám (ha kérdésünk van)', 'tel', '06 30 123 4567')}
-  <div class="field"><label>Fizetés az ajtóban</label><div class="pay">
+  ${f('phone', 'Telefonszám', 'tel', '06 30 123 4567')}
+  <div class="field"><span class="lbl">Hogyan fizet az ajtóban?</span><div class="pay">
     <button class="day ${S.pay === 'kp' ? 'on' : ''}" onclick="S.pay='kp';save();render()"><b>Készpénz</b></button>
     <button class="day ${S.pay === 'kartya' ? 'on' : ''}" onclick="S.pay='kartya';save();render()"><b>Bankkártya</b></button></div></div>
-  <div class="field"><label for="note">Megjegyzés (nem kötelező)</label><textarea id="note" rows="2" placeholder="pl. a kapucsengő nem működik, kopogjanak" oninput="S.note=this.value">${S.note || ''}</textarea></div>
-  <div class="card">${summary()}</div>`;
+  <div class="field"><label for="note">Megjegyzés <span class="opt">(nem kötelező)</span></label><textarea id="note" rows="2" placeholder="pl. a kapucsengő nem működik, kopogjanak" oninput="S.note=this.value">${S.note || ''}</textarea></div>
+  <div class="card">${summary()}</div>
+  <div class="notice" id="callnote" style="display:none"></div>`;
 }
 
 function viewDone() {
@@ -374,6 +334,7 @@ function viewDone() {
   return `<div class="done"><div class="check">${ICON_CHECK}</div><h2>Köszönjük, ${S.name.split(' ').slice(-1)[0] || ''}!</h2>
   <p class="sub">Rendelésszám: <b>${S.orderNo}</b></p>
   <div class="when"><b>${l.head}, ${l.sub}</b>délután visszük ide: ${S.addr}</div>
+  ${S.lastCall ? `<div class="notice">Mivel ez az első ${ft(BIG_ORDER)} feletti rendelése, kollégánk hamarosan felhívja a(z) <b>${S.phone}</b> számon, hogy egyeztesse. A rendelést a hívás után készítjük össze.</div>` : ''}
   <p class="sub">Fizetés az ajtóban, ${S.pay === 'kp' ? 'készpénzzel' : 'bankkártyával'}. Ha valami nincs, felhívjuk és megkérdezzük, mivel pótoljuk.</p>
   <button class="cta" onclick="S.orderNo=null;go(1)">Új rendelés</button></div>`;
 }
@@ -384,15 +345,34 @@ function renderBar() {
   if (S.orderNo || S.step === 0) { bar.style.display = 'none'; return; }
   bar.style.display = '';
   const meta = `<div class="meta">${count()} tétel<b>${ft(sub + (count() ? fee() : 0))}</b></div>`;
-  if (S.step === 1) el.innerHTML = meta + `<button class="cta" ${count() ? '' : 'disabled'} onclick="go(2)">Kosár (${count()})</button>`;
-  else if (S.step === 2) el.innerHTML = meta + `<button class="cta" ${count() && sub >= p.min ? '' : 'disabled'} onclick="go(3)">Tovább</button>`;
-  else { const ok = S.name.trim() && S.addr.trim() && S.phone.trim() && sub >= p.min;
-    el.innerHTML = meta + `<button class="cta" ${ok ? '' : 'disabled'} onclick="placeOrder()">Megrendelem</button>`; }
+  let btn, why = '';
+  const short = count() && sub < p.min ? `Még ${ft(p.min - sub)} hiányzik a legkisebb rendelésig (${ft(p.min)}).` : '';
+  if (S.step === 1) btn = `<button class="cta" ${count() ? '' : 'disabled'} onclick="go(2)">Kosár →</button>`;
+  else if (S.step === 2) { btn = `<button class="cta" ${count() && sub >= p.min ? '' : 'disabled'} onclick="go(3)">Tovább →</button>`; why = short; }
+  else {
+    const miss = [['name', 'név'], ['addr', 'cím'], ['phone', 'telefonszám']].filter(([k]) => !(S[k] || '').trim()).map(([, l]) => l);
+    btn = `<button class="cta" ${!miss.length && sub >= p.min ? '' : 'disabled'} onclick="placeOrder()">Megrendelem</button>`;
+    why = short || (miss.length ? `Még hiányzik: ${miss.join(', ')}.` : '');
+    const cn = document.getElementById('callnote'), total = sub + fee();
+    if (cn) { const on = normPhone(S.phone).length === 9 && needsCall(loadOrders(), S.phone, total);
+      cn.style.display = on ? '' : 'none';
+      cn.innerHTML = `<b>Telefonos megerősítés:</b> az első ${ft(BIG_ORDER)} feletti rendelést rövid hívással egyeztetjük, mielőtt összekészítjük.`; }
+  }
+  el.innerHTML = meta + btn;
+  let w = bar.querySelector('.why'); if (!w) { w = document.createElement('div'); w.className = 'why'; bar.appendChild(w); }
+  w.textContent = why; w.style.display = why ? '' : 'none';
 }
 
 function placeOrder() {
-  S.orderNo = 'HSZ-' + String(Math.floor(1000 + Math.random() * 9000));
-  S.cart = {}; save(); render(); window.scrollTo({ top: 0 });
+  if (!count() || S.orderNo) return;
+  const orders = loadOrders(), p = place(), sub = subtotal(), f = fee(), total = sub + f;
+  const call = needsCall(orders, S.phone, total);
+  const no = 'HSZ-' + String(Math.floor(1000 + Math.random() * 9000));
+  orders.unshift({ no, created: Date.now(), day: S.day, place: p.name, name: S.name.trim(), addr: S.addr.trim(), phone: S.phone.trim(), pay: S.pay, note: (S.note || '').trim(),
+    lines: Object.entries(S.cart).map(([id, q]) => { const i = ITEMS.find(x => x.id == id); return { e: i.e, n: i.n, u: i.u, p: i.p, q }; }),
+    sub, fee: f, total, status: call ? 'call' : 'new' });
+  saveOrders(orders);
+  S.orderNo = no; S.lastCall = call; S.cart = {}; S.note = ''; save(); render(); window.scrollTo({ top: 0 });
 }
 
 function render() {

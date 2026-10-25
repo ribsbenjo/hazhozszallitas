@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Házhozszállítás – Admin</title>
+<style>
+  :root {
+    --brand: #7A1F3D; --brandDark: #5A1530; --gold: #C9A227; --goldDark: #7D600C; --goldTint: #FBF4DC;
+    --text: #1F2937; --muted: #4B5563; --line: #E4DCDF; --bg: #F7F3F4; --soft: #F5EAEE; --white: #FFFFFF;
+    --green: #2E7D5B; --greenTint: #E6F2EC; --red: #A8322A; --redTint: #FBECEA; --blue: #1F4E8C; --blueTint: #EEF3FA;
+    --r: 14px;
+    --serif: "Calisto MT", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 17px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+  button, select { font-family: inherit; font-size: inherit; color: inherit; cursor: pointer; }
+  button { border: 0; background: none; }
+  button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  h1, h2 { font-family: var(--serif); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+  header { background: var(--brand); color: var(--white); border-bottom: 4px solid var(--gold); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; padding-bottom: 18px; flex-wrap: wrap; }
+  .kicker { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #F0D77F; font-weight: 600; }
+  header h1 { margin: 2px 0 0; font-size: 28px; line-height: 1.1; }
+  header a { color: #F6E6EC; font-size: 15px; }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 18px 0 6px; }
+  .kpi { background: var(--white); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; text-align: left; }
+  .kpi span { display: block; font-size: 14px; color: var(--muted); }
+  .kpi b { display: block; font-size: 28px; line-height: 1.15; font-family: var(--serif); }
+  .kpi small { font-size: 14px; color: var(--muted); }
+  .kpi.alert { border-color: #EBC4BF; background: var(--redTint); }
+  .kpi.alert b { color: var(--red); }
+  button.kpi:hover { border-color: var(--brand); }
+
+  .tabs { display: flex; gap: 6px; margin: 16px 0 12px; border-bottom: 1px solid var(--line); }
+  .tab { padding: 10px 14px; font-size: 17px; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -1px; }
+  .tab.on { color: var(--brand); border-bottom-color: var(--brand); }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+  .chip { padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--white); font-size: 15px; font-weight: 600; }
+  .chip.on { background: var(--brand); color: var(--white); border-color: var(--brand); }
+  .chip .n { display: inline-block; min-width: 22px; padding: 0 6px; margin-left: 4px; border-radius: 999px; background: var(--soft); color: var(--brand); font-size: 13px; text-align: center; }
+  .chip.on .n { background: rgba(255,255,255,.2); color: var(--white); }
+  .filters select { margin-left: auto; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--white); font-size: 15px; }
+
+  .orders { display: grid; gap: 10px; }
+  .order { background: var(--white); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; }
+  .order.call { border-color: #E2A9A2; box-shadow: inset 5px 0 0 var(--red); }
+  .order.fresh { animation: flash 2s ease; }
+  @keyframes flash { from { background: var(--goldTint); } to { background: var(--white); } }
+  .o-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+  .o-name { font-size: 19px; font-weight: 700; }
+  .o-meta { font-size: 15px; color: var(--muted); }
+  .o-total { text-align: right; font-size: 21px; font-weight: 700; white-space: nowrap; }
+  .o-total small { display: block; font-size: 14px; color: var(--muted); font-weight: 400; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .badge { font-size: 13.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--soft); color: var(--brand); }
+  .badge.st-call { background: var(--red); color: var(--white); }
+  .badge.st-new { background: var(--blueTint); color: var(--blue); }
+  .badge.st-packed { background: var(--goldTint); color: var(--goldDark); }
+  .badge.st-delivered { background: var(--greenTint); color: var(--green); }
+  .badge.st-cancelled { background: #EEE; color: #666; }
+  .badge.reg { background: var(--greenTint); color: var(--green); }
+  .why { margin-top: 10px; background: var(--redTint); color: var(--red); border-radius: 10px; padding: 10px 12px; font-size: 15.5px; }
+  .why b { color: var(--red); }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; color: var(--brand); font-weight: 600; font-size: 15.5px; }
+  .o-lines { margin: 8px 0 0; padding: 0; list-style: none; font-size: 15.5px; }
+  .o-lines li { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+  .o-lines li:last-child { border-bottom: 0; }
+  .o-addr { margin-top: 8px; font-size: 15.5px; color: var(--muted); }
+  .o-addr b { color: var(--text); font-weight: 600; }
+  .note { margin-top: 6px; font-size: 15.5px; font-style: italic; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 0 16px; height: 44px; border-radius: 10px; font-weight: 700; font-size: 15.5px; text-decoration: none; }
+  .btn.pri { background: var(--brand); color: var(--white); }
+  .btn.pri:hover { background: var(--brandDark); }
+  .btn.ok { background: var(--green); color: var(--white); }
+  .btn.sec { background: var(--white); color: var(--brand); border: 1.5px solid var(--brand); }
+  .btn.ghost { color: var(--muted); text-decoration: underline; padding: 0 8px; }
+  .btn.tel { background: var(--red); color: var(--white); }
+
+  .empty { background: var(--white); border: 1px dashed var(--line); border-radius: var(--r); padding: 28px; text-align: center; color: var(--muted); }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .panel { background: var(--white); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; }
+  .panel h2 { margin: 0 0 4px; font-size: 22px; color: var(--brand); }
+  .panel .sub { margin: 0 0 10px; font-size: 15px; color: var(--muted); }
+  .pick { width: 100%; border-collapse: collapse; font-size: 16px; }
+  .pick td { padding: 8px 4px; border-bottom: 1px solid var(--line); }
+  .pick td.q { text-align: right; font-weight: 700; white-space: nowrap; width: 70px; }
+  .pick tr:last-child td { border-bottom: 0; }
+  .stops { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  .stops li { counter-increment: s; display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+  .stops li:last-child { border-bottom: 0; }
+  .stops li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; background: var(--brand); color: var(--white); display: grid; place-items: center; font-size: 14px; font-weight: 700; flex: none; }
+  .stops small { display: block; color: var(--muted); font-size: 14.5px; }
+  .stops .pay { margin-left: auto; text-align: right; white-space: nowrap; font-weight: 700; }
+
+  footer { margin: 28px 0 40px; font-size: 14.5px; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  footer button { color: var(--brand); text-decoration: underline; font-size: 14.5px; padding: 0; }
+
+  @media (max-width: 760px) {
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cols { grid-template-columns: 1fr; }
+    .filters select { margin-left: 0; width: 100%; }
+  }
+  @media print {
+    header, .kpis, .tabs, .filters, footer, .actions { display: none !important; }
+    body { background: #fff; } .panel { border: 0; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div><div class="kicker">Erb és Társai • Bóly • belső oldal</div><h1>Házhozszállítás – Admin</h1></div>
+  <a href="./">Vásárlói oldal megnyitása →</a>
+</div></header>
+
+<div class="wrap">
+  <div class="kpis" id="kpis"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="view"></div>
+  <footer>
+    <span>Bemutató verzió: a rendelések ebben a böngészőben tárolódnak. A vásárlói oldalon leadott rendelés itt azonnal megjelenik, ha ugyanazon az eszközön nyitja meg.</span>
+    <button onclick="resetDemo()">Bemutató adatok visszaállítása</button>
+  </footer>
+</div>
+
+<script src="store.js"></script>
+<script>
+const ST = {
+  call: 'Visszahívandó', new: 'Összekészítésre vár', packed: 'Összekészítve', delivered: 'Kiszállítva', cancelled: 'Lemondva',
+};
+const NEXT = { new: ['packed', 'Összekészítve'], packed: ['delivered', 'Kiszállítva'] };
+const DAYN = ['vasárnap', 'hétfő', 'kedd', 'szerda', 'csütörtök', 'péntek', 'szombat'];
+const ft = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' Ft';
+const today = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return +d; };
+const dayLabel = t => { const diff = Math.round((t - today()) / 864e5);
+  const head = diff === 0 ? 'Ma' : diff === 1 ? 'Holnap' : diff === -1 ? 'Tegnap' : DAYN[new Date(t).getDay()].replace(/^./, c => c.toUpperCase());
+  return head + ', ' + new Date(t).toLocaleDateString('hu-HU', { month: 'long', day: 'numeric' }); };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+let orders = loadOrders(), known = new Set(orders.map(o => o.no)), fresh = new Set();
+const A = { tab: 'orders', filter: 'todo', day: 'all', pickDay: today() };
+
+function setStatus(no, st) {
+  const o = orders.find(x => x.no === no); if (!o) return;
+  if (st === 'cancelled' && !confirm(`Biztosan lemondja: ${o.no} (${o.name})?`)) return;
+  o.status = st; o.updated = Date.now(); saveOrders(orders); render();
+}
+
+function orderCard(o) {
+  const reg = isRegular(orders.filter(x => x !== o), o.phone);
+  const tel = 'tel:' + o.phone.replace(/[^\d+]/g, '');
+  const items = o.lines.reduce((a, l) => a + l.q, 0);
+  const acts = o.status === 'call'
+    ? `<a class="btn tel" href="${tel}">📞 Hívás: ${esc(o.phone)}</a>
+       <button class="btn ok" onclick="setStatus('${o.no}','new')">Felhívtam, rendben</button>
+       <button class="btn ghost" onclick="setStatus('${o.no}','cancelled')">Lemondás</button>`
+    : NEXT[o.status] ? `<button class="btn pri" onclick="setStatus('${o.no}','${NEXT[o.status][0]}')">✓ ${NEXT[o.status][1]}</button>
+       <a class="btn sec" href="${tel}">📞 Hívás</a>
+       <button class="btn ghost" onclick="setStatus('${o.no}','cancelled')">Lemondás</button>`
+    : `<button class="btn ghost" onclick="setStatus('${o.no}','new')">Visszaállítás</button>`;
+  return `<article class="order ${o.status === 'call' ? 'call' : ''} ${fresh.has(o.no) ? 'fresh' : ''}">
+    <div class="o-top"><div><div class="o-name">${esc(o.name)}</div>
+      <div class="o-meta">${esc(o.place)} • ${dayLabel(o.day)} délután • ${o.no}</div></div>
+      <div class="o-total">${ft(o.total)}<small>${items} db • ${o.pay === 'kp' ? 'készpénz' : 'kártya'}</small></div></div>
+    <div class="badges"><span class="badge st-${o.status}">${ST[o.status]}</span>${reg ? '<span class="badge reg">Törzsvásárló</span>' : '<span class="badge">Új vásárló</span>'}</div>
+    ${o.status === 'call' ? `<div class="why"><b>Hívja fel összekészítés előtt:</b> új vásárló, ${ft(BIG_ORDER)} feletti rendelés. Ha nem veszi fel vagy nem ő rendelt, mondja le.</div>` : ''}
+    <details ${o.status === 'call' ? 'open' : ''}><summary>Tételek és cím</summary>
+      <ul class="o-lines">${o.lines.map(l => `<li><span>${l.e} ${esc(l.n)} <span class="o-meta">(${esc(l.u)})</span></span><span><b>${l.q}×</b> ${ft(l.p * l.q)}</span></li>`).join('')}
+        <li><span>Kiszállítás</span><span>${o.fee ? ft(o.fee) : 'ingyenes'}</span></li></ul>
+      <div class="o-addr"><b>${esc(o.addr)}</b> • ${esc(o.phone)}</div>
+      ${o.note ? `<div class="note">„${esc(o.note)}”</div>` : ''}
+    </details>
+    <div class="actions">${acts}</div></article>`;
+}
+
+const FILTERS = [
+  ['todo', 'Teendők', o => ['call', 'new', 'packed'].includes(o.status)],
+  ['call', 'Visszahívandó', o => o.status === 'call'],
+  ['new', 'Összekészítésre vár', o => o.status === 'new'],
+  ['packed', 'Összekészítve', o => o.status === 'packed'],
+  ['done', 'Lezárt', o => ['delivered', 'cancelled'].includes(o.status)],
+  ['all', 'Mind', () => true],
+];
+const ORDER_RANK = { call: 0, new: 1, packed: 2, delivered: 3, cancelled: 4 };
+
+function viewOrders() {
+  const days = [...new Set(orders.map(o => o.day))].sort((a, b) => a - b);
+  const byDay = o => A.day === 'all' || o.day === +A.day;
+  const list = orders.filter(byDay).filter(FILTERS.find(f => f[0] === A.filter)[2])
+    .sort((a, b) => ORDER_RANK[a.status] - ORDER_RANK[b.status] || a.day - b.day || b.created - a.created);
+  return `<div class="filters">${FILTERS.map(([k, l, fn]) => `<button class="chip ${A.filter === k ? 'on' : ''}" onclick="A.filter='${k}';render()">${l}<span class="n">${orders.filter(byDay).filter(fn).length}</span></button>`).join('')}
+    <select aria-label="Szállítási nap" onchange="A.day=this.value;render()"><option value="all">Minden nap</option>${days.map(d => `<option value="${d}" ${+A.day === d ? 'selected' : ''}>${dayLabel(d)}</option>`).join('')}</select></div>
+  <div class="orders">${list.length ? list.map(orderCard).join('') : '<div class="empty">Nincs rendelés ebben a nézetben.</div>'}</div>`;
+}
+
+function viewPick() {
+  const days = [...new Set(orders.filter(o => o.day >= today()).map(o => o.day))].sort((a, b) => a - b);
+  if (!days.includes(A.pickDay) && days.length) A.pickDay = days[0];
+  const act = orders.filter(o => o.day === A.pickDay && ['new', 'packed', 'call'].includes(o.status));
+  const ready = act.filter(o => o.status !== 'call');
+  const agg = {};
+  ready.forEach(o => o.lines.forEach(l => { const k = l.n + '|' + l.u; agg[k] = agg[k] || { ...l, q: 0 }; agg[k].q += l.q; }));
+  const rows = Object.values(agg).sort((a, b) => a.n.localeCompare(b.n, 'hu'));
+  const waiting = act.length - ready.length;
+  const stops = [...ready].sort((a, b) => (a.place === 'Bóly') - (b.place === 'Bóly') || a.place.localeCompare(b.place, 'hu') || a.addr.localeCompare(b.addr, 'hu'));
+  return `<div class="filters">${days.map(d => `<button class="chip ${A.pickDay === d ? 'on' : ''}" onclick="A.pickDay=${d};render()">${dayLabel(d)}</button>`).join('') || '<span class="o-meta">Nincs közelgő szállítási nap.</span>'}
+    <button class="chip" style="margin-left:auto" onclick="print()">🖨 Nyomtatás</button></div>
+  ${waiting ? `<div class="why" style="margin:0 0 12px"><b>${waiting} rendelés még visszahívásra vár</b>, ezek nincsenek a listában.</div>` : ''}
+  <div class="cols">
+    <section class="panel"><h2>Összekészítési lista</h2><p class="sub">${dayLabel(A.pickDay)} • ${ready.length} rendelés összesen</p>
+      ${rows.length ? `<table class="pick">${rows.map(r => `<tr><td>${r.e} ${esc(r.n)} <span class="o-meta">(${esc(r.u)})</span></td><td class="q">${r.q}×</td></tr>`).join('')}</table>` : '<p class="o-meta">Nincs összekészítendő tétel.</p>'}</section>
+    <section class="panel"><h2>Szállítási sorrend</h2><p class="sub">Falvak előbb, Bóly a végén • ${ft(stops.reduce((a, o) => a + o.total, 0))} összesen</p>
+      ${stops.length ? `<ol class="stops">${stops.map(o => `<li><div><b>${esc(o.name)}</b><small>${esc(o.addr)} • ${esc(o.phone)}</small>${o.note ? `<small>„${esc(o.note)}”</small>` : ''}</div>
+        <div class="pay">${ft(o.total)}<small>${o.pay === 'kp' ? 'készpénz' : 'kártya'}</small></div></li>`).join('')}</ol>` : '<p class="o-meta">Nincs megálló.</p>'}</section>
+  </div>`;
+}
+
+function renderKpis() {
+  const t = today(), td = orders.filter(o => o.day === t && o.status !== 'cancelled');
+  const call = orders.filter(o => o.status === 'call').length, toPack = orders.filter(o => o.status === 'new').length;
+  const week = orders.filter(o => o.status !== 'cancelled' && o.day > t - 7 * 864e5 && o.day <= t + 7 * 864e5);
+  document.getElementById('kpis').innerHTML = `
+    <button class="kpi ${call ? 'alert' : ''}" onclick="A.tab='orders';A.filter='call';A.day='all';render()"><span>Visszahívandó</span><b>${call}</b><small>${ft(BIG_ORDER)} felett, új vásárló</small></button>
+    <button class="kpi" onclick="A.tab='orders';A.filter='new';A.day='all';render()"><span>Összekészítésre vár</span><b>${toPack}</b><small>rendelés</small></button>
+    <div class="kpi"><span>Mai szállítás</span><b>${td.length}</b><small>${ft(td.reduce((a, o) => a + o.total, 0))}</small></div>
+    <div class="kpi"><span>±7 nap forgalom</span><b>${week.length}</b><small>${ft(week.reduce((a, o) => a + o.total, 0))}</small></div>`;
+}
+
+function render() {
+  renderKpis();
+  document.getElementById('tabs').innerHTML = [['orders', 'Rendelések'], ['pick', 'Összekészítés és túra']]
+    .map(([k, l]) => `<button class="tab ${A.tab === k ? 'on' : ''}" onclick="A.tab='${k}';render()">${l}</button>`).join('');
+  document.getElementById('view').innerHTML = A.tab === 'orders' ? viewOrders() : viewPick();
+}
+
+function resetDemo() {
+  if (!confirm('Visszaállítja a bemutató adatokat? A most leadott próbarendelések törlődnek.')) return;
+  orders = demoOrders(); saveOrders(orders); known = new Set(orders.map(o => o.no)); fresh.clear(); render();
+}
+
+// New orders placed in the shop (another tab, same browser) appear live.
+window.addEventListener('storage', e => {
+  if (e.key !== STORE_KEY) return;
+  orders = loadOrders();
+  orders.forEach(o => { if (!known.has(o.no)) { fresh.add(o.no); known.add(o.no); } });
+  render();
+});
+render();
+</script>
+</body>
+</html>
