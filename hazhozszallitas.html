@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Erb Házhoz-híd</title>
+<title>Erb Házhozszállítás</title>
 <style>
   :root {
     --dark: #7A1F3D; --dark2: #5A1530; --dark3: #3F0E22; --accent: #C9A227; --accentLight: #E3C766; --accentDark: #9C7A12; --accentTint: #FBF4DC;
@@ -31,12 +31,12 @@
   header { color: var(--white); padding: 26px 20px 30px; position: relative; overflow: hidden;
     background: radial-gradient(120% 90% at 100% 0%, rgba(201,162,39,.28), transparent 55%), linear-gradient(150deg, #8C2749 0%, var(--dark) 45%, var(--dark3) 100%); }
   header .rings { position: absolute; right: -70px; top: -70px; width: 260px; height: 260px; pointer-events: none; }
-  header .badge { position: absolute; right: 22px; top: 26px; width: 66px; height: 66px; border-radius: 50%; display: grid; place-items: center;
+  header .badge { position: absolute; right: 18px; top: 22px; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
     background: linear-gradient(145deg, var(--accentLight), var(--accent) 60%, var(--accentDark)); box-shadow: 0 6px 18px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.4); }
-  header .badge svg { width: 32px; height: 32px; fill: var(--dark2); }
+  header .badge svg { width: 28px; height: 28px; fill: var(--dark2); }
   .kicker { font-size: 12.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--accentLight); font-weight: bold; display: flex; align-items: center; gap: 8px; }
   .kicker::before { content: ""; width: 22px; height: 2px; background: var(--accent); border-radius: 2px; }
-  header h1 { margin: 8px 0 8px; font-size: 36px; line-height: 1.05; letter-spacing: -.01em; }
+  header h1 { margin: 8px 0 8px; padding-right: 64px; font-size: clamp(28px, 7.6vw, 36px); line-height: 1.05; letter-spacing: -.01em; }
   header h1 em { font-style: italic; color: var(--accentLight); font-weight: normal; }
   header p { margin: 0; color: var(--sage); font-size: 16.5px; max-width: 72%; }
   .trust { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; position: relative; }
@@ -195,7 +195,7 @@
     <svg class="rings" viewBox="0 0 260 260" fill="none" stroke="#C9A227"><circle cx="130" cy="130" r="128" stroke-opacity=".22"/><circle cx="130" cy="130" r="100" stroke-opacity=".3"/><circle cx="130" cy="130" r="72" stroke-opacity=".4" stroke-dasharray="3 6"/></svg>
     <div class="badge"><svg viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h16c0 53 43 96 96 96s96-43 96-96h128c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zm368 160h50.7l77.3 77.3V256H416v-96zM112 416a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg></div>
     <div class="kicker">Erb és Társai • Bóly</div>
-    <h1>Házhoz-<em>híd</em></h1>
+    <h1>Házhoz<em>szállítás</em></h1>
     <p>Friss hús, zöldség és a napi bevásárlás – az ajtóig hozzuk.</p>
     <div class="trust"><span><b>10</b> település</span><span>Fizetés az ajtóban</span><span>Ismerős futár</span></div>
   </header>
@@ -260,8 +260,8 @@ const ITEMS = [
 const USUAL = { 11: 1, 14: 2, 15: 1, 6: 1, 1: 1, 16: 1, 9: 1 }; // sample "törzskosár"
 
 const S = { step: 0, place: null, cat: 'hus', cart: {}, day: null, pay: 'kp', name: '', addr: '', phone: '', note: '', orderNo: null };
-try { const saved = JSON.parse(localStorage.getItem('hazhozhid') || 'null'); if (saved) Object.assign(S, saved, { step: saved.place ? 1 : 0, orderNo: null }); } catch (e) {}
-const save = () => { try { localStorage.setItem('hazhozhid', JSON.stringify({ place: S.place, cart: S.cart, name: S.name, addr: S.addr, phone: S.phone, pay: S.pay })); } catch (e) {} };
+try { const saved = JSON.parse(localStorage.getItem('hazhozszallitas') || 'null'); if (saved) Object.assign(S, saved, { step: saved.place ? 1 : 0, orderNo: null }); } catch (e) {}
+const save = () => { try { localStorage.setItem('hazhozszallitas', JSON.stringify({ place: S.place, cart: S.cart, name: S.name, addr: S.addr, phone: S.phone, pay: S.pay })); } catch (e) {} };
 
 const ft = n => n.toLocaleString('hu-HU').replace(/ /g, ' ') + ' Ft';
 const place = () => PLACES.find(p => p.id === S.place);
@@ -391,7 +391,7 @@ function renderBar() {
 }
 
 function placeOrder() {
-  S.orderNo = 'HH-' + String(Math.floor(1000 + Math.random() * 9000));
+  S.orderNo = 'HSZ-' + String(Math.floor(1000 + Math.random() * 9000));
   S.cart = {}; save(); render(); window.scrollTo({ top: 0 });
 }
 
