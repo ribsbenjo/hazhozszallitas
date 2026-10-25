@@ -144,7 +144,8 @@
 
   .notice { margin-top: 14px; background: #EEF3FA; border: 1px solid #CFDCEF; color: var(--text); border-radius: var(--r); padding: 14px 16px; font-size: 17px; text-align: left; }
   .notice b { color: #1F4E8C; }
-  .toast { position: fixed; left: 50%; bottom: 110px; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--white); padding: 12px 20px; border-radius: 999px; font-size: 16px; opacity: 0; transition: .25s; pointer-events: none; z-index: 20; white-space: nowrap; }
+  .staff { display: block; text-align: center; margin: 28px 0 0; padding: 12px; color: var(--muted); font-size: 16px; }
+  .toast { position: fixed; left: 50%; bottom: 110px; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--white); padding: 12px 20px; border-radius: 999px; font-size: 16px; opacity: 0; transition: .25s; pointer-events: none; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   @media (min-width: 600px) { .app { box-shadow: 0 0 30px rgba(0,0,0,.06); } }
@@ -246,7 +247,7 @@ const dateLabel = x => {
   return { head, sub: x.toLocaleDateString('hu-HU', { month: 'long', day: 'numeric' }) };
 };
 
-function toast(t) { const el = document.getElementById('toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('show'), 1600); }
+function toast(t, ms = 1600) { const el = document.getElementById('toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('show'), ms); }
 function setQty(id, d) { const q = (S.cart[id] || 0) + d; if (q <= 0) delete S.cart[id]; else S.cart[id] = q; save(); render(); }
 function go(step) { S.step = step; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
@@ -268,7 +269,8 @@ function viewPlace() {
   ${groups.map(([t, fn]) => `<h3 class="group">${t}</h3><div class="list">${PLACES.filter(fn).map(x =>
     `<button class="place ${S.place === x.id ? 'on' : ''}" onclick="S.place='${x.id}';S.day=null;save();go(1)">${x.name}</button>`).join('')}</div>`).join('')}
   <div class="info"><b>${ft(FREE_OVER)} felett ingyen hozzuk</b>, alatta ${ft(FEE)} a kiszállítás. Az ajtóban fizet, készpénzzel vagy kártyával.</div>
-  ${callLink()}`;
+  ${callLink()}
+  <a class="staff" href="admin.html">Bolti belépés (demó) →</a>`;
 }
 
 function viewShop() {
@@ -351,10 +353,10 @@ function renderBar() {
   else if (S.step === 2) { btn = `<button class="cta" ${count() && sub >= p.min ? '' : 'disabled'} onclick="go(3)">Tovább →</button>`; why = short; }
   else {
     const miss = [['name', 'név'], ['addr', 'cím'], ['phone', 'telefonszám']].filter(([k]) => !(S[k] || '').trim()).map(([, l]) => l);
-    btn = `<button class="cta" ${!miss.length && sub >= p.min ? '' : 'disabled'} onclick="placeOrder()">Megrendelem</button>`;
+    btn = `<button class="cta" ${!miss.length && sub >= p.min && !S.sending ? '' : 'disabled'} onclick="placeOrder()">${S.sending ? 'Küldés…' : 'Megrendelem'}</button>`;
     why = short || (miss.length ? `Még hiányzik: ${miss.join(', ')}.` : '');
     const cn = document.getElementById('callnote'), total = sub + fee();
-    if (cn) { const on = normPhone(S.phone).length === 9 && needsCall(loadOrders(), S.phone, total);
+    if (cn) { const on = total > BIG_ORDER && normPhone(S.phone).length === 9 && checkCall(S.phone);
       cn.style.display = on ? '' : 'none';
       cn.innerHTML = `<b>Telefonos megerősítés:</b> az első ${ft(BIG_ORDER)} feletti rendelést rövid hívással egyeztetjük, mielőtt összekészítjük.`; }
   }
@@ -363,16 +365,22 @@ function renderBar() {
   w.textContent = why; w.style.display = why ? '' : 'none';
 }
 
-function placeOrder() {
-  if (!count() || S.orderNo) return;
-  const orders = loadOrders(), p = place(), sub = subtotal(), f = fee(), total = sub + f;
-  const call = needsCall(orders, S.phone, total);
-  const no = 'HSZ-' + String(Math.floor(1000 + Math.random() * 9000));
-  orders.unshift({ no, created: Date.now(), day: S.day, place: p.name, name: S.name.trim(), addr: S.addr.trim(), phone: S.phone.trim(), pay: S.pay, note: (S.note || '').trim(),
-    lines: Object.entries(S.cart).map(([id, q]) => { const i = ITEMS.find(x => x.id == id); return { e: i.e, n: i.n, u: i.u, p: i.p, q }; }),
-    sub, fee: f, total, status: call ? 'call' : 'new' });
-  saveOrders(orders);
-  S.orderNo = no; S.lastCall = call; S.cart = {}; S.note = ''; save(); render(); window.scrollTo({ top: 0 });
+// Asks the API once per phone number whether a large order would need a confirmation call.
+const callCache = {};
+function checkCall(phone) {
+  const k = normPhone(phone);
+  if (!(k in callCache)) { callCache[k] = false; api(`/check?phone=${encodeURIComponent(k)}&total=${BIG_ORDER + 1}`).then(r => { callCache[k] = r.call; renderBar(); }).catch(() => {}); }
+  return callCache[k];
+}
+
+async function placeOrder() {
+  if (!count() || S.orderNo || S.sending) return;
+  S.sending = true; renderBar();
+  try {
+    const r = await api('/orders', { method: 'POST', body: { place: S.place, day: S.day, name: S.name, addr: S.addr, phone: S.phone, pay: S.pay, note: S.note, cart: S.cart } });
+    S.orderNo = r.no; S.lastCall = r.call; S.cart = {}; S.note = ''; save(); render(); window.scrollTo({ top: 0 });
+  } catch (e) { toast(e.message, 5000); }
+  finally { S.sending = false; renderBar(); }
 }
 
 function render() {

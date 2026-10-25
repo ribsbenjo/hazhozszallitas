@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hazhozszallitas-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-25",
+  "account_id": "c3bb6b7d5ed44c3a2056f050188b9371",
+  "workers_dev": true,
+  "observability": { "enabled": true },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "hazhozszallitas", "database_id": "86866469-37ae-4ce3-82c3-79e71bbfae74" }
+  ]
+}

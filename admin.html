@@ -27,7 +27,19 @@
   header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; padding-bottom: 18px; flex-wrap: wrap; }
   .kicker { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #F0D77F; font-weight: 600; }
   header h1 { margin: 2px 0 0; font-size: 28px; line-height: 1.1; }
-  header a { color: #F6E6EC; font-size: 15px; }
+  header a, header button { color: #F6E6EC; font-size: 15px; }
+  .hlinks { display: flex; gap: 16px; align-items: center; }
+  .hlinks button { text-decoration: underline; padding: 0; }
+  .login { max-width: 420px; margin: 40px auto; background: var(--white); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; }
+  .login h2 { margin: 0 0 6px; color: var(--brand); font-size: 28px; }
+  .login .sub { color: var(--muted); margin: 0 0 18px; font-size: 16px; }
+  .login label { display: block; font-weight: 600; margin-bottom: 6px; }
+  .login input { width: 100%; padding: 14px; font-size: 18px; border: 2px solid var(--line); border-radius: 12px; font-family: inherit; }
+  .login input:focus { outline: none; border-color: var(--brand); }
+  .login .demo { margin: 10px 0 18px; background: var(--goldTint); border-radius: 10px; padding: 10px 12px; font-size: 16px; }
+  .btn.big { width: 100%; justify-content: center; height: 54px; font-size: 18px; }
+  .login .err { color: var(--red); margin-top: 10px; font-size: 16px; min-height: 1em; }
+  .btn:disabled { opacity: .6; cursor: wait; }
 
   .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 18px 0 6px; }
   .kpi { background: var(--white); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; text-align: left; }
@@ -120,15 +132,27 @@
 <body>
 <header><div class="wrap">
   <div><div class="kicker">Erb és Társai • Bóly • belső oldal</div><h1>Házhozszállítás – Admin</h1></div>
-  <a href="./">Vásárlói oldal megnyitása →</a>
+  <div class="hlinks"><a href="./">Vásárlói oldal →</a><button id="logout" onclick="logout()" style="display:none">Kilépés</button></div>
 </div></header>
 
-<div class="wrap">
+<div class="wrap" id="login" style="display:none">
+  <form class="login" onsubmit="login(event)">
+    <h2>Bolti belépés</h2>
+    <p class="sub">Ez a bemutató verzió. A jelszó már be van írva, csak nyomja meg a gombot.</p>
+    <label for="pw">Jelszó</label>
+    <input id="pw" type="text" value="bolt2026" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="demo">Demó jelszó: <b>bolt2026</b></div>
+    <button class="btn pri big" id="loginBtn" type="submit">Belépés</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</div>
+
+<div class="wrap" id="app" style="display:none">
   <div class="kpis" id="kpis"></div>
   <div class="tabs" id="tabs"></div>
   <div id="view"></div>
   <footer>
-    <span>Bemutató verzió: a rendelések ebben a böngészőben tárolódnak. A vásárlói oldalon leadott rendelés itt azonnal megjelenik, ha ugyanazon az eszközön nyitja meg.</span>
+    <span id="sync">Bemutató verzió. Az új rendelések 15 másodpercen belül maguktól megjelennek.</span>
     <button onclick="resetDemo()">Bemutató adatok visszaállítása</button>
   </footer>
 </div>
@@ -147,13 +171,50 @@ const dayLabel = t => { const diff = Math.round((t - today()) / 864e5);
   return head + ', ' + new Date(t).toLocaleDateString('hu-HU', { month: 'long', day: 'numeric' }); };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-let orders = loadOrders(), known = new Set(orders.map(o => o.no)), fresh = new Set();
+let orders = [], known = null, fresh = new Set(), token = null, poll = null;
 const A = { tab: 'orders', filter: 'todo', day: 'all', pickDay: today() };
+const isRegular = (list, phone) => list.some(o => o.status === 'delivered' && normPhone(o.phone) === normPhone(phone));
 
-function setStatus(no, st) {
+try { const t = JSON.parse(localStorage.getItem('hsz_token')); if (t && t.exp > Date.now()) token = t.token; } catch (e) {}
+
+async function login(ev) {
+  ev.preventDefault();
+  const btn = document.getElementById('loginBtn'), err = document.getElementById('loginErr');
+  btn.disabled = true; err.textContent = '';
+  try {
+    const r = await api('/login', { method: 'POST', body: { password: document.getElementById('pw').value } });
+    token = r.token; try { localStorage.setItem('hsz_token', JSON.stringify({ token: r.token, exp: r.exp })); } catch (e) {}
+    await start();
+  } catch (e) { err.textContent = e.message; }
+  finally { btn.disabled = false; }
+}
+function logout() { token = null; clearInterval(poll); try { localStorage.removeItem('hsz_token'); } catch (e) {} show(false); }
+function show(inApp) {
+  document.getElementById('login').style.display = inApp ? 'none' : '';
+  document.getElementById('app').style.display = inApp ? '' : 'none';
+  document.getElementById('logout').style.display = inApp ? '' : 'none';
+}
+
+async function load() {
+  try {
+    const r = await api('/admin/orders', { token });
+    if (known) r.orders.forEach(o => { if (!known.has(o.no)) fresh.add(o.no); });
+    known = new Set(r.orders.map(o => o.no));
+    orders = r.orders; render();
+    document.getElementById('sync').textContent = 'Bemutató verzió. Frissítve: ' + new Date().toLocaleTimeString('hu-HU') + '. Az új rendelések 15 másodpercen belül maguktól megjelennek.';
+  } catch (e) {
+    if (e.status === 401) return logout();
+    document.getElementById('sync').textContent = e.message;
+  }
+}
+async function start() { show(true); await load(); clearInterval(poll); poll = setInterval(load, 15000); }
+
+async function setStatus(no, st) {
   const o = orders.find(x => x.no === no); if (!o) return;
   if (st === 'cancelled' && !confirm(`Biztosan lemondja: ${o.no} (${o.name})?`)) return;
-  o.status = st; o.updated = Date.now(); saveOrders(orders); render();
+  const prev = o.status; o.status = st; render();
+  try { await api('/admin/orders/' + no, { method: 'PATCH', body: { status: st }, token }); }
+  catch (e) { o.status = prev; render(); alert(e.message); if (e.status === 401) logout(); }
 }
 
 function orderCard(o) {
@@ -243,19 +304,13 @@ function render() {
   document.getElementById('view').innerHTML = A.tab === 'orders' ? viewOrders() : viewPick();
 }
 
-function resetDemo() {
-  if (!confirm('Visszaállítja a bemutató adatokat? A most leadott próbarendelések törlődnek.')) return;
-  orders = demoOrders(); saveOrders(orders); known = new Set(orders.map(o => o.no)); fresh.clear(); render();
+async function resetDemo() {
+  if (!confirm('Visszaállítja a bemutató adatokat? Minden leadott próbarendelés törlődik.')) return;
+  try { await api('/admin/reset', { method: 'POST', token }); known = null; fresh.clear(); await load(); }
+  catch (e) { alert(e.message); }
 }
 
-// New orders placed in the shop (another tab, same browser) appear live.
-window.addEventListener('storage', e => {
-  if (e.key !== STORE_KEY) return;
-  orders = loadOrders();
-  orders.forEach(o => { if (!known.has(o.no)) { fresh.add(o.no); known.add(o.no); } });
-  render();
-});
-render();
+if (token) start(); else show(false);
 </script>
 </body>
 </html>
